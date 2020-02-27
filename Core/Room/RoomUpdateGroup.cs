@@ -1,14 +1,13 @@
 using Unity.Entities;
 using UnityEngine.Scripting;
 
-namespace RoomSystem.Core
+namespace Parabole.RoomSystem.Core.Room
 {
 	public class RoomUpdateGroup : ComponentSystemGroup
 	{
 		[Preserve]
 		public RoomUpdateGroup()
 		{
-			
 		}
 	}
 }

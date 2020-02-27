@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace DefaultNamespace
+namespace Parabole.RoomSystem.TriggerIntegration
 {
 	public struct RoomTrigger : IComponentData
 	{
