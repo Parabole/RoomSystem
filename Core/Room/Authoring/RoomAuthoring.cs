@@ -1,3 +1,4 @@
+using Parabole.RoomSystem.Core.Room.Components;
 using Unity.Entities;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace Parabole.RoomSystem.Core.Room.Authoring
 
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
-			dstManager.AddComponentData(entity, new global::Parabole.RoomSystem.Core.Room.Components.Room());
+			dstManager.AddComponentData(entity, new RoomDefinition());
 		}
 	}
 }
