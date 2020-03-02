@@ -13,7 +13,7 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 		
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
-			dstManager.AddComponentData(entity, new RoomPortalDefinition());
+			dstManager.AddComponentData(entity, new RoomPortal());
 		}
 
 		#if UNITY_EDITOR
