@@ -1,0 +1,15 @@
+{
+    "name": "Parabole.RoomSystem.Core.Editor",
+    "references": [
+        "GUID:b31301c6d31eb3c45be77466d780566b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
