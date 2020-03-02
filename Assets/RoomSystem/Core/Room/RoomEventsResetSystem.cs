@@ -3,7 +3,7 @@ using Unity.Entities;
 namespace Parabole.RoomSystem.Core.Room
 {
 	[UpdateInGroup(typeof(RoomUpdateGroup))]
-	[UpdateBefore(typeof(NewActiveRoomRequestSystem))]
+	[UpdateBefore(typeof(ActiveRoomSelectedUpdateSystem))]
 	public class BaseRoomEventsResetSystem<T> : SystemBase where T : struct, IComponentData
 	{
 		private EntityQuery query;

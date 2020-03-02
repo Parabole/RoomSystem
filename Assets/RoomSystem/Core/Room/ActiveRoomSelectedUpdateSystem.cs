@@ -4,7 +4,7 @@ using Unity.Entities;
 namespace Parabole.RoomSystem.Core.Room
 {
 	[UpdateInGroup(typeof(RoomUpdateGroup))]
-	public class NewActiveRoomRequestSystem : SystemBase
+	public class ActiveRoomSelectedUpdateSystem : SystemBase
 	{
 		protected override void OnUpdate()
 		{
