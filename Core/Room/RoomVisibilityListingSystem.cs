@@ -1,15 +1,15 @@
 using Parabole.RoomSystem.Core.Portal.Components;
 using Parabole.RoomSystem.Core.Room;
 using Parabole.RoomSystem.Core.Room.Components;
+using RoomSystem.Core.Portal;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 
 namespace RoomSystem.Core.Room
 {
-	[UpdateAfter(typeof(ActiveRoomSelectedUpdateSystem))]
-	[UpdateInGroup(typeof(RoomUpdateGroup))]
-	public class RoomVisibilityUpdateSystem : SystemBase
+	[UpdateAfter(typeof(RoomPortalUpdateGroup))]
+	[UpdateInGroup(typeof(RoomUpdateRequestGroup))]
+	public class RoomVisibilityListingSystem : SystemBase
 	{
 		private EntityQuery newActiveQuery;
 		
@@ -36,29 +36,51 @@ namespace RoomSystem.Core.Room
 
 		protected override void OnUpdate()
 		{
+			visibleEntities.Clear();
+			standbyEntities.Clear();
+
+			if (newActiveQuery.CalculateEntityCount() > 0)
+			{
+				FillLists();
+			}
+			
+		}
+
+		private void FillLists()
+		{
 			var localVisibleEntities = visibleEntities;
 			var localStandbyEntities = standbyEntities;
 			
-			localVisibleEntities.Clear();
-			localStandbyEntities.Clear();
-
 			var portalFromEntity = GetComponentDataFromEntity<RoomPortal>(true);
-			var portalReferencesFromEntity = GetBufferFromEntity<RoomPortalReference>(true);
-			
+
+			FillVisible(localVisibleEntities, portalFromEntity);
+
+			FillStandby(localVisibleEntities, localStandbyEntities, portalFromEntity);
+		}
+
+		private void FillVisible(NativeList<Entity> localVisibleEntities, 
+			ComponentDataFromEntity<RoomPortal> portalFromEntity)
+		{
 			Entities.WithAll<JustActiveRoom>()
 				.ForEach((Entity entity, DynamicBuffer<RoomPortalReference> portalReferences) =>
-			{
-				AddUnion(localVisibleEntities, entity);
-				for (int i = 0; i < portalReferences.Length; i++)
 				{
-					var portalEntity = portalReferences[i].Entity;
-					var portal = portalFromEntity[portalEntity];
-					if (portal.IsOpen)
+					AddUnion(localVisibleEntities, entity);
+					for (int i = 0; i < portalReferences.Length; i++)
 					{
-						AddUnion(localVisibleEntities, portalEntity);
+						var portalEntity = portalReferences[i].Entity;
+						var portal = portalFromEntity[portalEntity];
+						if (portal.IsOpen)
+						{
+							AddUnion(localVisibleEntities, portalEntity);
+						}
 					}
-				}
-			}).Run();
+				}).Run();
+		}
+
+		private void FillStandby(NativeList<Entity> localVisibleEntities, NativeList<Entity> localStandbyEntities, 
+			ComponentDataFromEntity<RoomPortal> portalFromEntity)
+		{
+			var portalReferencesFromEntity = GetBufferFromEntity<RoomPortalReference>(true);
 			
 			Job.WithCode(() =>
 			{
@@ -71,15 +93,7 @@ namespace RoomSystem.Core.Room
 				}
 			}).Run();
 		}
-		
-		private static void AddUnion(NativeList<Entity> entities, Entity entity)
-		{
-			if (!entities.Contains(entity))
-			{
-				entities.Add(entity);
-			}
-		}
-		
+
 		private static void CheckStandby(NativeList<Entity> standbyEntities, 
 			DynamicBuffer<RoomPortalReference> portalReferences, 
 			ComponentDataFromEntity<RoomPortal> portalFromEntity)
@@ -92,6 +106,14 @@ namespace RoomSystem.Core.Room
                 {
                 	AddUnion(standbyEntities, portalEntity);
                 }
+			}
+		}
+		
+		private static void AddUnion(NativeList<Entity> entities, Entity entity)
+		{
+			if (!entities.Contains(entity))
+			{
+				entities.Add(entity);
 			}
 		}
 	}

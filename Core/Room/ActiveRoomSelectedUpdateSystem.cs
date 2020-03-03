@@ -1,5 +1,6 @@
 using Parabole.RoomSystem.Core.Room.Components;
 using Unity.Entities;
+using Unity.Entities.UniversalDelegates;
 
 namespace Parabole.RoomSystem.Core.Room
 {
@@ -8,6 +9,8 @@ namespace Parabole.RoomSystem.Core.Room
 	{
 		protected override void OnUpdate()
 		{
+			EntityManager.CreateEntity(ComponentType.ReadWrite<RoomUpdateRequest>());
+
 			Entities.WithStructuralChanges().WithAll<ActiveRoom>().WithNone<ActiveRoomSelected>()
 				.ForEach((Entity entity) =>
 				{
