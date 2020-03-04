@@ -1,3 +1,4 @@
+using Parabole.RoomSystem.Core.Helper;
 using Parabole.RoomSystem.Core.Portal.Components;
 using Parabole.RoomSystem.Core.Room;
 using Parabole.RoomSystem.Core.Room.Components;
@@ -7,6 +8,7 @@ using Unity.Entities;
 
 namespace RoomSystem.Core.Room
 {
+	[AlwaysUpdateSystem]
 	[UpdateAfter(typeof(RoomPortalUpdateGroup))]
 	[UpdateInGroup(typeof(RoomUpdateRequestGroup))]
 	public class RoomVisibilityListingSystem : SystemBase
@@ -24,8 +26,6 @@ namespace RoomSystem.Core.Room
 			newActiveQuery = GetEntityQuery(
 				ComponentType.ReadOnly<JustActiveRoom>(),
 				ComponentType.ReadOnly<RoomPortalReference>());
-			
-			RequireForUpdate(newActiveQuery);
 		}
 
 		protected override void OnDestroy()
@@ -64,16 +64,8 @@ namespace RoomSystem.Core.Room
 			Entities.WithAll<JustActiveRoom>()
 				.ForEach((Entity entity, DynamicBuffer<RoomPortalReference> portalReferences) =>
 				{
-					AddUnion(localVisibleEntities, entity);
-					for (int i = 0; i < portalReferences.Length; i++)
-					{
-						var portalEntity = portalReferences[i].Entity;
-						var portal = portalFromEntity[portalEntity];
-						if (portal.IsOpen)
-						{
-							AddUnion(localVisibleEntities, portalEntity);
-						}
-					}
+					localVisibleEntities.AddUnion(entity);
+					CheckVisible(localVisibleEntities, portalReferences, portalFromEntity);
 				}).Run();
 		}
 
@@ -88,10 +80,25 @@ namespace RoomSystem.Core.Room
 				{
 					var visibleEntity = localVisibleEntities[i];
 					var portalReferences = portalReferencesFromEntity[visibleEntity];
-					AddUnion(localStandbyEntities, visibleEntity);
+					localStandbyEntities.AddUnion(visibleEntity);
 					CheckStandby(localStandbyEntities, portalReferences, portalFromEntity);
 				}
 			}).Run();
+		}
+
+		private static void CheckVisible(NativeList<Entity> visibleEntities,
+			DynamicBuffer<RoomPortalReference> portalReferences, 
+			ComponentDataFromEntity<RoomPortal> portalFromEntity)
+		{
+			for (int i = 0; i < portalReferences.Length; i++)
+			{
+				var portalEntity = portalReferences[i].Entity;
+				var portal = portalFromEntity[portalEntity];
+				if (portal.IsOpen)
+				{
+					visibleEntities.AddUnion(portalEntity);
+				}
+			}
 		}
 
 		private static void CheckStandby(NativeList<Entity> standbyEntities, 
@@ -104,16 +111,8 @@ namespace RoomSystem.Core.Room
                 var portal = portalFromEntity[portalEntity];
                 if (portal.IsAccessible)
                 {
-                	AddUnion(standbyEntities, portalEntity);
+	                standbyEntities.AddUnion(portalEntity);
                 }
-			}
-		}
-		
-		private static void AddUnion(NativeList<Entity> entities, Entity entity)
-		{
-			if (!entities.Contains(entity))
-			{
-				entities.Add(entity);
 			}
 		}
 	}

@@ -1,3 +1,4 @@
+using Parabole.RoomSystem.Core.Helper;
 using Parabole.RoomSystem.Core.Room;
 using Parabole.RoomSystem.Core.Room.Components;
 using Unity.Collections;
@@ -44,7 +45,7 @@ namespace RoomSystem.Core.Room
 
 		private JobHandle StartVisibleJobs(JobHandle inputDependencies)
 		{
-			var newEntities = listingSystem.VisibleEntities;
+			var neededEntities = listingSystem.VisibleEntities;
 			
 			var localRemoveList = removeVisibleList;
 			var localAddList = addVisibleList;
@@ -52,16 +53,16 @@ namespace RoomSystem.Core.Room
 			localRemoveList.Clear();
 			localAddList.Clear();
 			
-			var removeHandle = Entities.WithAll<RoomDefinition, VisibleRoom>().WithReadOnly(newEntities)
+			var removeHandle = Entities.WithAll<RoomDefinition, VisibleRoom>().WithReadOnly(neededEntities)
 				.ForEach((Entity entity, DynamicBuffer<RoomContentReference> buffer) =>
 				{
-					CheckRemove(entity, buffer, newEntities, localRemoveList);
+					CheckRemove(entity, buffer, neededEntities, localRemoveList);
 				}).Schedule(inputDependencies);
 
-			var addHandle = Entities.WithAll<RoomDefinition>().WithNone<VisibleRoom>().WithReadOnly(newEntities)
+			var addHandle = Entities.WithAll<RoomDefinition>().WithNone<VisibleRoom>().WithReadOnly(neededEntities)
 				.ForEach((Entity entity, DynamicBuffer<RoomContentReference> buffer) =>
 				{
-					CheckAdd(entity, buffer, newEntities, localAddList);
+					CheckAdd(entity, buffer, neededEntities, localAddList);
 				}).Schedule(inputDependencies);
 			
 			return JobHandle.CombineDependencies(removeHandle, addHandle);
@@ -69,7 +70,7 @@ namespace RoomSystem.Core.Room
 
 		private JobHandle StartStandbyJobs(JobHandle inputDependencies)
 		{
-			var newEntities = listingSystem.StandbyEntities;
+			var neededEntities = listingSystem.StandbyEntities;
 
 			var localRemoveList = removeStandbyList;
 			var localAddList = addStandbyList;
@@ -77,42 +78,42 @@ namespace RoomSystem.Core.Room
 			localRemoveList.Clear();
 			localAddList.Clear();
 			
-			var removeHandle = Entities.WithAll<RoomDefinition, StandbyRoom>().WithReadOnly(newEntities)
+			var removeHandle = Entities.WithAll<RoomDefinition, StandbyRoom>().WithReadOnly(neededEntities)
 				.ForEach((Entity entity, DynamicBuffer<RoomContentReference> buffer) =>
 				{
-					CheckRemove(entity, buffer, newEntities, localRemoveList);
+					CheckRemove(entity, buffer, neededEntities, localRemoveList);
 				}).Schedule(inputDependencies);
 
-			var addHandle = Entities.WithAll<RoomDefinition>().WithNone<StandbyRoom>().WithReadOnly(newEntities)
+			var addHandle = Entities.WithAll<RoomDefinition>().WithNone<StandbyRoom>().WithReadOnly(neededEntities)
 				.ForEach((Entity entity, DynamicBuffer<RoomContentReference> buffer) =>
 				{
-					CheckAdd(entity, buffer, newEntities, localAddList);
+					CheckAdd(entity, buffer, neededEntities, localAddList);
 				}).Schedule(inputDependencies);
 			
 			return JobHandle.CombineDependencies(removeHandle, addHandle);
 		}
 
 		private static void CheckRemove(Entity entity, DynamicBuffer<RoomContentReference> buffer, 
-			NativeList<Entity> newEntities, NativeList<Entity> removeList)
+			NativeList<Entity> neededEntities, NativeList<Entity> removeList)
 		{
-			if (newEntities.Contains(entity))
+			if (neededEntities.Contains(entity))
 			{
 				return;
 			}
 			
-			removeList.Add(entity);
+			removeList.AddUnion(entity);
 			AddBufferEntitiesToList(buffer, removeList);
 		}
 
 		private static void CheckAdd(Entity entity, DynamicBuffer<RoomContentReference> buffer, 
-			NativeList<Entity> newEntities, NativeList<Entity> addList)
+			NativeList<Entity> neededEntities, NativeList<Entity> addList)
 		{
-			if (!newEntities.Contains(entity))
+			if (!neededEntities.Contains(entity))
 			{
 				return;
 			}
 			
-			addList.Add(entity);
+			addList.AddUnion(entity);
 			AddBufferEntitiesToList(buffer, addList);
 		}
 
@@ -120,7 +121,7 @@ namespace RoomSystem.Core.Room
 		{
 			for (int i = 0; i < buffer.Length; i++)
 			{
-				list.Add(buffer[i].Entity);
+				list.AddUnion(buffer[i].Entity);
 			}
 		}
 
