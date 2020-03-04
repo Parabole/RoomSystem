@@ -1,7 +1,7 @@
 {
-    "name": "Parabole.RoomSystem.Core.Editor",
+    "name": "Parabole.RoomSystem.TriggerIntegration.Editor",
     "references": [
-        "GUID:b31301c6d31eb3c45be77466d780566b"
+        "GUID:47ca10cd47356984cbe7a09d021a3cef"
     ],
     "includePlatforms": [
         "Editor"
