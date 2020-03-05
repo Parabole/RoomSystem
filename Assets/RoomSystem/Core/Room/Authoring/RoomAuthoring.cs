@@ -1,5 +1,6 @@
 using System.Linq;
 using Parabole.RoomSystem.Core.Content.Authoring;
+using Parabole.RoomSystem.Core.Helper;
 using Parabole.RoomSystem.Core.Room.Components;
 using Unity.Entities;
 using UnityEngine;
@@ -16,7 +17,10 @@ namespace Parabole.RoomSystem.Core.Room.Authoring
 		
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
-			dstManager.AddComponentData(entity, new RoomDefinition());
+			dstManager.AddComponentData(entity, new RoomDefinition
+			{
+				NameHash = HashHelper.GetHash(roomName),
+			});
 			
 			// Makes sure the buffer exists for the archetype, even if RoomPortalAuthoring adds it too
 			dstManager.AddBuffer<RoomPortalReference>(entity);
