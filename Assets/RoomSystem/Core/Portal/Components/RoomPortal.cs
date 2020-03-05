@@ -13,5 +13,9 @@ namespace Parabole.RoomSystem.Core.Portal.Components
 		/// The portal can be opened in the near future
 		/// </summary>
 		public bool IsAccessible;
+
+		public Entity EntityRoomA;
+		
+		public Entity EntityRoomB;
 	}
 }

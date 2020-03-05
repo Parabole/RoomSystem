@@ -26,7 +26,7 @@ namespace Parabole.RoomSystem.Core.Editor
 		{
 			base.OnInspectorGUI();
 
-			if (!IsFullyAssigned)
+			if (!authoring.GetIsFullyAssigned())
 			{
 				DrawErrorLabel();
 				return;
@@ -74,8 +74,5 @@ namespace Parabole.RoomSystem.Core.Editor
 		}
 
 		private bool AreNameValids => authoring.RoomAuthoringA.IsNameValid && authoring.RoomAuthoringB.IsNameValid;
-		private bool IsFullyAssigned => authoring.RoomAuthoringA != null &&
-										authoring.RoomAuthoringB != null &&
-										authoring.RoomAuthoringA != authoring.RoomAuthoringB;
 	}
 }

@@ -35,8 +35,9 @@ namespace RoomSystem.Core.Room
 		{
 			var inputDependencies = Dependency;
 			
+			// TODO: Find a way to run those in parallel
 			var visibleHandle = StartVisibleJobs(inputDependencies);
-			var standbyHandle = StartStandbyJobs(inputDependencies);
+			var standbyHandle = StartStandbyJobs(visibleHandle);
 			
 			JobHandle.CombineDependencies(visibleHandle, standbyHandle).Complete();
 
@@ -63,9 +64,9 @@ namespace RoomSystem.Core.Room
 				.ForEach((Entity entity, DynamicBuffer<RoomContentReference> buffer) =>
 				{
 					CheckAdd(entity, buffer, neededEntities, localAddList);
-				}).Schedule(inputDependencies);
+				}).Schedule(removeHandle);
 			
-			return JobHandle.CombineDependencies(removeHandle, addHandle);
+			return addHandle;
 		}
 
 		private JobHandle StartStandbyJobs(JobHandle inputDependencies)
@@ -88,9 +89,9 @@ namespace RoomSystem.Core.Room
 				.ForEach((Entity entity, DynamicBuffer<RoomContentReference> buffer) =>
 				{
 					CheckAdd(entity, buffer, neededEntities, localAddList);
-				}).Schedule(inputDependencies);
+				}).Schedule(removeHandle);
 			
-			return JobHandle.CombineDependencies(removeHandle, addHandle);
+			return addHandle;
 		}
 
 		private static void CheckRemove(Entity entity, DynamicBuffer<RoomContentReference> buffer, 

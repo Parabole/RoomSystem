@@ -7,7 +7,7 @@ namespace Parabole.RoomSystem.Core.Room.Components
 		
 	}
 
-	public class JustVisibleRoomResetSystem : BaseRoomEventsResetSystem<JustNotVisibleRoom>
+	public class JustVisibleRoomResetSystem : BaseRoomEventsResetSystem<JustVisibleRoom>
 	{
 		
 	}
