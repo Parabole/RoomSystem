@@ -7,6 +7,6 @@ namespace Parabole.RoomSystem.Core.Room.Components
 	/// </summary>
 	public struct RoomDefinition : IComponentData
 	{
-	
+		public int NameHash;
 	}
 }

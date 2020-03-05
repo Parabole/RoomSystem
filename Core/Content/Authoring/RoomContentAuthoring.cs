@@ -18,7 +18,7 @@ namespace Parabole.RoomSystem.Core.Content.Authoring
 
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
-			dstManager.AddComponentData(entity, new RoomContentDefinition());
+			dstManager.AddComponentData(entity, new RoomContent());
 		}
 	}
 }
