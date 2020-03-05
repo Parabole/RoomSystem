@@ -24,6 +24,7 @@ namespace RoomSystem.Core.Room
 		protected override void OnCreate()
 		{
 			newActiveQuery = GetEntityQuery(
+				ComponentType.ReadOnly<RoomDefinition>(),
 				ComponentType.ReadOnly<JustActiveRoom>(),
 				ComponentType.ReadOnly<RoomPortalReference>());
 		}
@@ -43,7 +44,6 @@ namespace RoomSystem.Core.Room
 			{
 				FillLists();
 			}
-			
 		}
 
 		private void FillLists()
@@ -61,7 +61,8 @@ namespace RoomSystem.Core.Room
 		private void FillVisible(NativeList<Entity> localVisibleEntities, 
 			ComponentDataFromEntity<RoomPortal> portalFromEntity)
 		{
-			Entities.WithAll<JustActiveRoom>()
+			// Only select rooms with RoomDefinition, and not contents
+			Entities.WithAll<RoomDefinition, JustActiveRoom>()
 				.ForEach((Entity entity, DynamicBuffer<RoomPortalReference> portalReferences) =>
 				{
 					localVisibleEntities.AddUnion(entity);
@@ -92,11 +93,11 @@ namespace RoomSystem.Core.Room
 		{
 			for (int i = 0; i < portalReferences.Length; i++)
 			{
-				var portalEntity = portalReferences[i].Entity;
+				var portalEntity = portalReferences[i].PortalEntity;
 				var portal = portalFromEntity[portalEntity];
 				if (portal.IsOpen)
 				{
-					visibleEntities.AddUnion(portalEntity);
+					visibleEntities.AddUnion(portalReferences[i].LinkedRoomEntity);
 				}
 			}
 		}
@@ -107,11 +108,11 @@ namespace RoomSystem.Core.Room
 		{
 			for (int i = 0; i < portalReferences.Length; i++)
 			{
-				var portalEntity = portalReferences[i].Entity;
+				var portalEntity = portalReferences[i].PortalEntity;
                 var portal = portalFromEntity[portalEntity];
                 if (portal.IsAccessible)
                 {
-	                standbyEntities.AddUnion(portalEntity);
+	                standbyEntities.AddUnion(portalReferences[i].LinkedRoomEntity);
                 }
 			}
 		}

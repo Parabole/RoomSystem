@@ -17,6 +17,11 @@ namespace Parabole.RoomSystem.Core.Room.Authoring
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
 			dstManager.AddComponentData(entity, new RoomDefinition());
+			
+			// Makes sure the buffer exists for the archetype, even if RoomPortalAuthoring adds it too
+			dstManager.AddBuffer<RoomPortalReference>(entity);
+			
+			AddContentReferences(entity, dstManager, conversionSystem);
 		}
 
 		private void AddContentReferences(Entity entity, EntityManager dstManager, 
