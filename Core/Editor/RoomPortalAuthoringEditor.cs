@@ -17,7 +17,6 @@ namespace Parabole.RoomSystem.Core.Editor
 			var gameObject = authoring.gameObject;
 			if (!GameObjectEditorIconHelper.GetHasIcon(gameObject))
 			{
-				Debug.Log("Set");
 				GameObjectEditorIconHelper.SetIcon(gameObject, GameObjectEditorIconHelper.LabelIcon.Blue);
 			}
 		}

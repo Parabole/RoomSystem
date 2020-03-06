@@ -11,10 +11,15 @@ namespace Parabole.RoomSystem.TriggerIntegration
 	public class RoomTriggerSystem : SystemBase
 	{
 		private EntityQuery currentlyActiveQuery;
+		private EntityQuery fillerQuery;
 
 		protected override void OnCreate()
 		{
 			currentlyActiveQuery = GetEntityQuery(ComponentType.ReadOnly<ActiveRoomSelected>());
+			
+			fillerQuery = GetEntityQuery(
+				ComponentType.ReadOnly<RoomNetworkFillerTrigger>(),
+				ComponentType.ReadOnly<TriggerStay>());
 		}
 
 		protected override void OnUpdate()
@@ -37,13 +42,21 @@ namespace Parabole.RoomSystem.TriggerIntegration
 			{
 				return;
 			}
-
-			EntityManager.RemoveComponent<ActiveRoomSelected>(currentlyActiveQuery);
-
+			
 			if (newEntity != Entity.Null)
 			{
+				RemoveActive();
 				EntityManager.AddComponent<ActiveRoomSelected>(newEntity);
 			}
+			else if (fillerQuery.CalculateEntityCount() > 0)
+			{
+				RemoveActive();
+			}
+		}
+
+		private void RemoveActive()
+		{
+			EntityManager.RemoveComponent<ActiveRoomSelected>(currentlyActiveQuery);
 		}
 	}
 }

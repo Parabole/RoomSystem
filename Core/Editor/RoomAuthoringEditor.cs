@@ -77,6 +77,7 @@ namespace Parabole.RoomSystem.Core.Editor
 				var roomName = authoring.RoomName;
 				gameObject.GetComponent<RoomContentAuthoring>().ContentName = roomName;
 				gameObject.GetComponent<RoomContentDynamicLinkAuthoring>().RoomNames = new[] { roomName };
+				gameObject.transform.position = authoring.transform.position;
 				
 				Selection.activeGameObject = gameObject;
 			}
