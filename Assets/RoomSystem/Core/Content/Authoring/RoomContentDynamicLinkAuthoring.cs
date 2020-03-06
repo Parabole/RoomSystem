@@ -9,15 +9,21 @@ namespace Parabole.RoomSystem.Core.Content.Authoring
 	{
 		[SerializeField] private string[] roomNames = null;
 
+		public string[] RoomNames
+		{
+			get => roomNames;
+			set => roomNames = value;
+		}
+
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
 			var buffer = dstManager.AddBuffer<RoomContentDynamicLink>(entity);
 
-			for (int i = 0; i < roomNames.Length; i++)
+			for (int i = 0; i < RoomNames.Length; i++)
 			{
 				buffer.Add(new RoomContentDynamicLink
 				{
-					NameHash = HashHelper.GetHash(roomNames[i]),
+					NameHash = HashHelper.GetHash(RoomNames[i]),
 				});
 			}
 		}

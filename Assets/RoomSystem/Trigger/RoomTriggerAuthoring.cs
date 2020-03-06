@@ -9,7 +9,13 @@ namespace Parabole.RoomSystem.Core.Room.Authoring
 	public class RoomTriggerAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
 		[SerializeField] private TriggerAuthoring triggerAuthoring = null;
-		
+
+		public TriggerAuthoring TriggerAuthoring
+		{
+			get => triggerAuthoring;
+			set => triggerAuthoring = value;
+		}
+
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
 			var triggerEntity = conversionSystem.GetPrimaryEntity(triggerAuthoring);
