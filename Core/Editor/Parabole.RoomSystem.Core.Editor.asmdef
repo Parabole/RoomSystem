@@ -1,7 +1,8 @@
 {
     "name": "Parabole.RoomSystem.Core.Editor",
     "references": [
-        "GUID:b31301c6d31eb3c45be77466d780566b"
+        "GUID:b31301c6d31eb3c45be77466d780566b",
+        "GUID:8819f35a0fc84499b990e90a4ca1911f"
     ],
     "includePlatforms": [
         "Editor"

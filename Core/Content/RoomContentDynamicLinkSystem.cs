@@ -2,6 +2,7 @@ using Parabole.RoomSystem.Core.Content.Authoring;
 using Parabole.RoomSystem.Core.Room.Components;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
 
 namespace RoomSystem.Core.Room
 {
@@ -12,6 +13,9 @@ namespace RoomSystem.Core.Room
 		private NativeList<Entity> fullyLinkedContents = new NativeList<Entity>(Allocator.Persistent);
 
 		private EntityQuery query;
+
+		// Used for warning
+		private int runCount = 0;
 		
 		protected override void OnCreate()
 		{
@@ -25,17 +29,43 @@ namespace RoomSystem.Core.Room
 			fullyLinkedContents.Dispose();
 		}
 
+		protected override void OnStartRunning()
+		{
+			runCount = 0;
+		}
+
 		protected override void OnUpdate()
 		{
+			CheckForLogLinkDelay();
+
 			roomMap.Clear();
 			linkOperations.Clear();
 			fullyLinkedContents.Clear();
 
 			UpdateMap(roomMap);
 			
-			GetLinkOperations(linkOperations, fullyLinkedContents);
+			GetLinkOperations(linkOperations, fullyLinkedContents, roomMap);
 
 			SetComponents();
+		}
+
+		private void CheckForLogLinkDelay()
+		{
+			runCount++;
+			if (runCount == 100)
+			{
+				Entities.WithoutBurst().WithNone<RoomContentDynamicLinkSystemState>()
+					.ForEach((Entity entity, ref DynamicBuffer<RoomContentDynamicLink> links) =>
+					{
+						for (int i = links.Length - 1; i >= 0; i--)
+						{
+							if (!links[i].IsLinked)
+							{
+								LogWarning(entity, i);
+							}
+						}
+					}).Run();
+			}
 		}
 
 		private void UpdateMap(NativeHashMap<int, Entity> map)
@@ -46,15 +76,16 @@ namespace RoomSystem.Core.Room
 			}).Run();
 		}
 
-		private void GetLinkOperations(NativeList<LinkOperation> linkOperations, NativeList<Entity> fullyLinkedContents)
+		private void GetLinkOperations(NativeList<LinkOperation> linkOperations, NativeList<Entity> fullyLinkedContents, 
+			NativeHashMap<int, Entity> roomMap)
 		{
 			Entities.WithStoreEntityQueryInField(ref query).WithNone<RoomContentDynamicLinkSystemState>()
-				.WithStructuralChanges().ForEach((Entity entity, ref DynamicBuffer<RoomContentDynamicLink> links) =>
+				.ForEach((Entity entity, ref DynamicBuffer<RoomContentDynamicLink> links) =>
 				{
 					bool isFullyFilled = true;
 					for (int i = links.Length - 1; i >= 0; i--)
 					{
-						if (!TryLink(entity, i, linkOperations, links))
+						if (!TryLink(entity, i, linkOperations, links, roomMap))
 						{
 							isFullyFilled = false;
 						}
@@ -67,8 +98,8 @@ namespace RoomSystem.Core.Room
 				}).Run();
 		}
 
-		private bool TryLink(Entity entity, int index, NativeList<LinkOperation> linkOperations,
-			DynamicBuffer<RoomContentDynamicLink> links)
+		private static bool TryLink(Entity entity, int index, NativeList<LinkOperation> linkOperations,
+			DynamicBuffer<RoomContentDynamicLink> links, NativeHashMap<int, Entity> roomMap)
 		{
 			var link = links[index];
 			
@@ -137,6 +168,22 @@ namespace RoomSystem.Core.Room
 				EntityManager.AddComponent<JustStandbyRoom>(contentEntity);
 				EntityManager.AddComponent<StandbyRoom>(contentEntity);
 			}
+		}
+
+		private void LogWarning(Entity entity, int index)
+		{
+			string entityDescription;
+#if UNITY_EDITOR
+			entityDescription = $"{EntityManager.GetName(entity)}, {entity}";
+#else
+			entityDescription = $"{entity}";
+#endif
+			string message = $"Can't dynamically find room on content entity {entityDescription}. " + 
+							$"This is logged after 100 frames of searching. " +
+							$"This will happen if the assigned name at index {index} in " +
+							$"RoomContentDynamicLinkAuthoring is wrong or if the room's entity is not yet created";
+			
+			Debug.LogWarning(message);
 		}
 
 		private struct LinkOperation
