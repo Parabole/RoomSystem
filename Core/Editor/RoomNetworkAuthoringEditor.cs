@@ -32,7 +32,7 @@ namespace Parabole.RoomSystem.Core.Editor
 		{
 			if (GUILayout.Button("Create New Room"))
 			{
-				var gameObject = new GameObject("New Room", typeof(ConvertToEntity), typeof(RoomAuthoring));
+				var gameObject = new GameObject("New Room", typeof(RoomAuthoring));
 				gameObject.transform.SetParent(authoring.transform, false);
 				Selection.activeGameObject = gameObject;
 			}
@@ -42,7 +42,7 @@ namespace Parabole.RoomSystem.Core.Editor
 		{
 			if (GUILayout.Button("Create New Room Portal"))
 			{
-				var gameObject = new GameObject("New Portal", typeof(ConvertToEntity), typeof(RoomPortalAuthoring));
+				var gameObject = new GameObject("New Portal", typeof(RoomPortalAuthoring));
 				gameObject.transform.SetParent(authoring.transform, false);
 				Selection.activeGameObject = gameObject;
 			}
