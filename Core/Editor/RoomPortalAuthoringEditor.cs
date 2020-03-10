@@ -57,8 +57,8 @@ namespace Parabole.RoomSystem.Core.Editor
 			{
 				return;
 			}
-			
-			var automaticName = $"Portal_{authoring.RoomAuthoringA.RoomName}_{authoring.RoomAuthoringB.RoomName}";
+
+			var automaticName = authoring.GetPortalName();
 			var gameObject = authoring.gameObject;
 			if (automaticName != gameObject.name)
 			{

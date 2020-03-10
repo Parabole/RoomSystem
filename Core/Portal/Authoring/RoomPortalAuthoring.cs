@@ -1,3 +1,4 @@
+using Parabole.RoomSystem.Core.Helper;
 using Parabole.RoomSystem.Core.Portal.Components;
 using Parabole.RoomSystem.Core.Room.Authoring;
 using Parabole.RoomSystem.Core.Room.Components;
@@ -29,6 +30,11 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 				EntityRoomB = entityRoomB,
 			});
 			
+			dstManager.AddComponentData(entity, new RoomPortalId
+			{
+				Value = HashHelper.GetHash(GetPortalName()),
+			});
+			
 			AddReferenceToRoom(entity, entityRoomA, entityRoomB, dstManager);
 			AddReferenceToRoom(entity, entityRoomB, entityRoomA, dstManager);
 		}
@@ -52,7 +58,12 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 					roomAuthoringA != roomAuthoringB;
 		}
 
-		#if UNITY_EDITOR
+		public string GetPortalName()
+		{
+			return $"Portal_{RoomAuthoringA.RoomName}_{RoomAuthoringB.RoomName}";
+		}
+		
+#if UNITY_EDITOR
 		public RoomAuthoring RoomAuthoringA => roomAuthoringA;
 		public RoomAuthoring RoomAuthoringB => roomAuthoringB;
 
