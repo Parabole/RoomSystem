@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-namespace Parabole.RoomSystem.BasicContent.Components
+namespace Parabole.RoomSystem.BasicContent
 {
 	public class RoomContentRenderer : IComponentData
 	{
