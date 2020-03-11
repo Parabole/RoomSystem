@@ -1,5 +1,4 @@
 using System.Linq;
-using Parabole.RoomSystem.BasicContent.Components;
 using Unity.Entities;
 using UnityEngine;
 
@@ -8,7 +7,7 @@ namespace Parabole.RoomSystem.BasicContent.Authoring
 	[RequiresEntityConversion]
 	public class RoomContentRendererAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
-		[SerializeField] private GameObject[] rendererParents;
+		[SerializeField] private GameObject[] rendererParents = null;
 		
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
