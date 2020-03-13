@@ -2,7 +2,6 @@ using Parabole.InteractionSystem.Runtime.Triggers;
 using Parabole.RoomSystem.Core.Room;
 using Parabole.RoomSystem.Core.Room.Components;
 using Unity.Entities;
-using Unity.Jobs;
 
 namespace Parabole.RoomSystem.TriggerIntegration
 {
@@ -48,7 +47,7 @@ namespace Parabole.RoomSystem.TriggerIntegration
 				RemoveActive();
 				EntityManager.AddComponent<ActiveRoomSelected>(newEntity);
 			}
-			else if (fillerQuery.CalculateEntityCount() > 0)
+			else if (fillerQuery.CalculateEntityCount() == 0)
 			{
 				RemoveActive();
 			}

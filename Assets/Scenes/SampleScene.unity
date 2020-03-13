@@ -1324,7 +1324,7 @@ MonoBehaviour:
   lookSpeedV: 2
   zoomSpeed: 2
   moveSpeed: 6
-  moveAcceleration: 1
+  moveAcceleration: 6
 --- !u!1 &1009114798
 GameObject:
   m_ObjectHideFlags: 0

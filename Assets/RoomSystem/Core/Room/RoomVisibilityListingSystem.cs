@@ -25,7 +25,7 @@ namespace RoomSystem.Core.Room
 		{
 			newActiveQuery = GetEntityQuery(
 				ComponentType.ReadOnly<RoomDefinition>(),
-				ComponentType.ReadOnly<JustActiveRoom>(),
+				ComponentType.ReadOnly<ActiveRoom>(),
 				ComponentType.ReadOnly<RoomPortalReference>());
 		}
 
@@ -62,7 +62,7 @@ namespace RoomSystem.Core.Room
 			ComponentDataFromEntity<RoomPortal> portalFromEntity)
 		{
 			// Only select rooms with RoomDefinition, and not contents
-			Entities.WithAll<RoomDefinition, JustActiveRoom>()
+			Entities.WithAll<RoomDefinition, ActiveRoom>()
 				.ForEach((Entity entity, DynamicBuffer<RoomPortalReference> portalReferences) =>
 				{
 					localVisibleEntities.AddUnion(entity);
