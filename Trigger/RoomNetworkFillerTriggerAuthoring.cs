@@ -1,4 +1,4 @@
-using RoomSystem.Core.Network.Authoring;
+using Parabole.RoomSystem.TriggerIntegration;
 using Unity.Entities;
 using UnityEngine;
 
@@ -9,7 +9,7 @@ namespace DefaultNamespace
 	{
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
-			dstManager.AddComponent<RoomNetworkAuthoring>(entity);
+			dstManager.AddComponent<RoomNetworkFillerTrigger>(entity);
 		}
 	}
 }

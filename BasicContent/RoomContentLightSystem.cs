@@ -5,7 +5,7 @@ using Unity.Entities;
 namespace Parabole.RoomSystem.BasicContent
 {
 	[UpdateInGroup(typeof(RoomContentUpdateGroup))]
-	public class LightRoomContentSystem : SystemBase
+	public class RoomContentLightSystem : SystemBase
 	{
 		protected override void OnUpdate()
 		{

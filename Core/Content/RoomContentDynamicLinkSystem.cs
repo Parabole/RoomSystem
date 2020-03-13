@@ -1,4 +1,5 @@
 using Parabole.RoomSystem.Core.Content.Authoring;
+using Parabole.RoomSystem.Core.Room;
 using Parabole.RoomSystem.Core.Room.Components;
 using Unity.Collections;
 using Unity.Entities;
@@ -6,6 +7,8 @@ using UnityEngine;
 
 namespace RoomSystem.Core.Room
 {
+	[UpdateInGroup(typeof(RoomUpdateGroup))]
+	[UpdateBefore(typeof(ActiveRoomSelectedUpdateSystem))]
 	public class RoomContentDynamicLinkSystem : SystemBase
 	{
 		private NativeHashMap<int, Entity> roomMap = new NativeHashMap<int, Entity>(64, Allocator.Persistent);
@@ -14,7 +17,7 @@ namespace RoomSystem.Core.Room
 
 		private EntityQuery query;
 
-		// Used for warning
+		/// Used for delay warning
 		private int runCount = 0;
 		
 		protected override void OnCreate()
