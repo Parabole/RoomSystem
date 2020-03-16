@@ -11,10 +11,13 @@ namespace Parabole.RoomSystem.Core.Room.Authoring
 	public class RoomAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
 		[SerializeField] private string roomName = null;
+		[SerializeField] private bool seeThrough = false;
 
 		public bool IsNameValid => !string.IsNullOrEmpty(roomName);
 		public string RoomName => roomName;
-		
+
+		public bool SeeThrough => seeThrough;
+
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
 			dstManager.AddComponentData(entity, new RoomDefinition

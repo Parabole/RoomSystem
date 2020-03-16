@@ -446,6 +446,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomName: D
+  seeThrough: 0
 --- !u!114 &432877123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -685,6 +686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomName: B
+  seeThrough: 0
 --- !u!114 &683328514
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1356,6 +1358,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomName: A
+  seeThrough: 0
 --- !u!4 &1009114800
 Transform:
   m_ObjectHideFlags: 0
@@ -1535,6 +1538,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomName: E
+  seeThrough: 0
 --- !u!114 &1017398097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2358,6 +2362,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomName: C
+  seeThrough: 0
 --- !u!4 &1739333209
 Transform:
   m_ObjectHideFlags: 0
