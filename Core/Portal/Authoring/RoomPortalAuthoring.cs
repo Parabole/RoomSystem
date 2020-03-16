@@ -12,6 +12,9 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 	{
 		[SerializeField] private RoomAuthoring roomAuthoringA;
 		[SerializeField] private RoomAuthoring roomAuthoringB;
+
+		private bool wasChainChecked;
+		private bool isChain;
 		
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
@@ -21,34 +24,25 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 				return;
 			}
 
-			var entityRoomA = conversionSystem.GetPrimaryEntity(roomAuthoringA);
-			var entityRoomB = conversionSystem.GetPrimaryEntity(roomAuthoringB);
+			var roomEntityA = conversionSystem.GetPrimaryEntity(roomAuthoringA);
+			var roomEntityB = conversionSystem.GetPrimaryEntity(roomAuthoringB);
 			
-			dstManager.AddComponentData(entity, new RoomPortal
-			{
-				EntityRoomA = entityRoomA,
-				EntityRoomB = entityRoomB,
-			});
+			RoomPortalAuthoringHelper.CreatePortal(entity, roomEntityA, roomEntityB, dstManager);
 			
 			dstManager.AddComponentData(entity, new RoomPortalId
 			{
 				Value = HashHelper.GetHash(GetPortalName()),
 			});
-			
-			AddReferenceToRoom(entity, entityRoomA, entityRoomB, dstManager);
-			AddReferenceToRoom(entity, entityRoomB, entityRoomA, dstManager);
 		}
 
-		private static void AddReferenceToRoom(Entity portalEntity, Entity roomEntity, 
-			Entity linkedRoomEntity, EntityManager dstManager)
+		public bool GetIsChain()
 		{
-			// Make sure the buffer exists by calling add buffer
-			var buffer = dstManager.AddBuffer<RoomPortalReference>(roomEntity);
-			buffer.Add(new RoomPortalReference
+			if (!wasChainChecked)
 			{
-				PortalEntity = portalEntity,
-				LinkedRoomEntity = linkedRoomEntity,
-			});
+				isChain = GetComponent<RoomPortalChainAuthoring>() != null;
+				wasChainChecked = true;
+			}
+			return isChain;
 		}
 
 		public bool GetIsFullyAssigned()

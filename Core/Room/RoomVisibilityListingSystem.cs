@@ -70,6 +70,7 @@ namespace RoomSystem.Core.Room
 				}).Run();
 		}
 
+		// TODO: Standby rooms are currently every room connected to a visible room, find a way to check proximity too.
 		private void FillStandby(NativeList<Entity> localVisibleEntities, NativeList<Entity> localStandbyEntities, 
 			ComponentDataFromEntity<RoomPortal> portalFromEntity)
 		{
