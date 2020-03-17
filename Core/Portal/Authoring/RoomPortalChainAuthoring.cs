@@ -6,8 +6,8 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 {
 	public class RoomPortalChainAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
-		[SerializeField] private RoomPortalAuthoring portalA;
-		[SerializeField] private RoomPortalAuthoring portalB;
+		[SerializeField] private RoomPortalAuthoring portalA = null;
+		[SerializeField] private RoomPortalAuthoring portalB = null;
 		
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
