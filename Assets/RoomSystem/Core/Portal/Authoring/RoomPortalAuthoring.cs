@@ -10,8 +10,11 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 	[RequiresEntityConversion]
 	public class RoomPortalAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
-		[SerializeField] private RoomAuthoring roomAuthoringA = null;
-		[SerializeField] private RoomAuthoring roomAuthoringB = null;
+		[SerializeField] private RoomAuthoring roomAuthoringA;
+		[SerializeField] private RoomAuthoring roomAuthoringB;
+		
+		public RoomAuthoring RoomAuthoringA => roomAuthoringA;
+		public RoomAuthoring RoomAuthoringB => roomAuthoringB;
 
 		private bool wasChainChecked;
 		private bool isChain;
@@ -58,9 +61,6 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 		}
 		
 #if UNITY_EDITOR
-		public RoomAuthoring RoomAuthoringA => roomAuthoringA;
-		public RoomAuthoring RoomAuthoringB => roomAuthoringB;
-
 		public Vector3 GetCenterPosition()
 		{
 			return (RoomAuthoringA.transform.position + RoomAuthoringB.transform.position) / 2;
