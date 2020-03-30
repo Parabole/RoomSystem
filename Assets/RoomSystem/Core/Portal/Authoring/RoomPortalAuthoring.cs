@@ -10,8 +10,8 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 	[RequiresEntityConversion]
 	public class RoomPortalAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
-		[SerializeField] private RoomAuthoring roomAuthoringA;
-		[SerializeField] private RoomAuthoring roomAuthoringB;
+		[SerializeField] private RoomAuthoring roomAuthoringA = null;
+		[SerializeField] private RoomAuthoring roomAuthoringB = null;
 		
 		public RoomAuthoring RoomAuthoringA => roomAuthoringA;
 		public RoomAuthoring RoomAuthoringB => roomAuthoringB;
