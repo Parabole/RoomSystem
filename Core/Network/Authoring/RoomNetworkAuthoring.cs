@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-namespace RoomSystem.Core.Network.Authoring
+namespace Parabole.RoomSystem.Core.Network.Authoring
 {
 	[RequiresEntityConversion]
 	public class RoomNetworkAuthoring : MonoBehaviour, IConvertGameObjectToEntity

@@ -2,7 +2,7 @@ using Parabole.RoomSystem.Core.Portal.Components;
 using Parabole.RoomSystem.Core.Room;
 using Unity.Entities;
 
-namespace RoomSystem.Core.Portal
+namespace Parabole.RoomSystem.Core.Portal
 {
 	[UpdateInGroup(typeof(RoomUpdateRequestGroup))]
 	[UpdateBefore(typeof(RoomPortalUpdateGroup))]

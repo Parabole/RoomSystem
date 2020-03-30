@@ -27,6 +27,7 @@ namespace Parabole.RoomSystem.Core.Room.Authoring
 			
 			// Makes sure the buffer exists for the archetype, even if RoomPortalAuthoring adds it too
 			dstManager.AddBuffer<RoomPortalReference>(entity);
+			dstManager.AddBuffer<RoomExcludePortalReference>(entity);
 			
 			AddContentReferences(entity, dstManager, conversionSystem);
 		}

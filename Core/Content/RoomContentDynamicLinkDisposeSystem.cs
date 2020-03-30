@@ -1,10 +1,13 @@
 using Parabole.RoomSystem.Core.Content.Authoring;
+using Parabole.RoomSystem.Core.Content.Components;
 using Parabole.RoomSystem.Core.Room.Components;
 using Unity.Collections;
 using Unity.Entities;
 
-namespace RoomSystem.Core.Room
+namespace Parabole.RoomSystem.Core.Room
 {
+	[UpdateInGroup(typeof(RoomUpdateGroup))]
+	[UpdateBefore(typeof(RoomUpdateRequestGroup))]
 	public class RoomContentDynamicLinkDisposeSystem : SystemBase
 	{
 		private EntityQuery removedQuery;
