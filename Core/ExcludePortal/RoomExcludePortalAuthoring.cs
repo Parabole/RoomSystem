@@ -7,8 +7,8 @@ namespace Parabole.RoomSystem.Core.ExcludePortal
 {
 	public class RoomExcludePortalAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
-		[SerializeField] private RoomAuthoring roomAuthoringA;
-		[SerializeField] private RoomAuthoring roomAuthoringB;
+		[SerializeField] private RoomAuthoring roomAuthoringA = null;
+		[SerializeField] private RoomAuthoring roomAuthoringB = null;
 		
 		public RoomAuthoring RoomAuthoringA => roomAuthoringA;
 		public RoomAuthoring RoomAuthoringB => roomAuthoringB;
