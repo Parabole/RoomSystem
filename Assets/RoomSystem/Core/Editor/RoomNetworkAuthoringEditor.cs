@@ -1,8 +1,7 @@
-using Parabole.RoomSystem.Core.Content.Authoring;
+using Parabole.RoomSystem.Core.ExcludePortal;
+using Parabole.RoomSystem.Core.Network.Authoring;
 using Parabole.RoomSystem.Core.Portal.Authoring;
 using Parabole.RoomSystem.Core.Room.Authoring;
-using RoomSystem.Core.Network.Authoring;
-using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
 
@@ -26,6 +25,7 @@ namespace Parabole.RoomSystem.Core.Editor
 			
 			CheckCreateRoom();
 			CheckCreatePortal();
+			CheckCreateExcludePortal();
 		}
 		
 		private void CheckCreateRoom()
@@ -43,6 +43,16 @@ namespace Parabole.RoomSystem.Core.Editor
 			if (GUILayout.Button("Create New Room Portal"))
 			{
 				var gameObject = new GameObject("New Portal", typeof(RoomPortalAuthoring));
+				gameObject.transform.SetParent(authoring.transform, false);
+				Selection.activeGameObject = gameObject;
+			}
+		}
+		
+		private void CheckCreateExcludePortal()
+		{
+			if (GUILayout.Button("Create New Room Exclude Portal"))
+			{
+				var gameObject = new GameObject("New Exclude Portal", typeof(RoomExcludePortalAuthoring));
 				gameObject.transform.SetParent(authoring.transform, false);
 				Selection.activeGameObject = gameObject;
 			}

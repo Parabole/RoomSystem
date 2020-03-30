@@ -1,6 +1,5 @@
-using Parabole.RoomSystem.Core.Content.Authoring;
+using Parabole.RoomSystem.Core.Content.Components;
 using Unity.Entities;
-using Unity.Jobs;
 using UnityEngine;
 
 namespace Samples

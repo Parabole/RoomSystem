@@ -2,7 +2,7 @@ using Parabole.RoomSystem.Core.Room;
 using Parabole.RoomSystem.Core.Room.Components;
 using Unity.Entities;
 
-namespace RoomSystem.Core.Room
+namespace Parabole.RoomSystem.Core.Room
 {
 	[UpdateInGroup(typeof(RoomUpdateGroup))]
 	[UpdateAfter(typeof(ActiveRoomSelectedUpdateSystem))]

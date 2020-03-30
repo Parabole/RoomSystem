@@ -1,3 +1,4 @@
+using Parabole.RoomSystem.Core.Content.Components;
 using Parabole.RoomSystem.Core.Helper;
 using Unity.Entities;
 using UnityEngine;

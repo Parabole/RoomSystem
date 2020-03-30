@@ -9,6 +9,9 @@ namespace Parabole.RoomSystem.Core.Room.Authoring
 	public class RoomTriggerAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
 		[SerializeField] private TriggerAuthoring triggerAuthoring = null;
+		
+		[Tooltip("Priority for the room, goes from highest to lowest")]
+		[SerializeField] private int priority = 100;
 
 		public TriggerAuthoring TriggerAuthoring
 		{
@@ -22,6 +25,7 @@ namespace Parabole.RoomSystem.Core.Room.Authoring
 			dstManager.AddComponentData(triggerEntity, new RoomTrigger
 			{
 				RoomEntity = entity,
+				Priority = priority,
 			});
 		}
 	}

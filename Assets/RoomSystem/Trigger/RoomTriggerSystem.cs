@@ -1,6 +1,8 @@
+using System;
 using Parabole.InteractionSystem.Runtime.Triggers;
 using Parabole.RoomSystem.Core.Room;
 using Parabole.RoomSystem.Core.Room.Components;
+using Unity.Collections;
 using Unity.Entities;
 
 namespace Parabole.RoomSystem.TriggerIntegration
@@ -26,10 +28,18 @@ namespace Parabole.RoomSystem.TriggerIntegration
 			var newSelectedEntity = Entity.Null;
 			var isAlreadyActive = false;
 
+			int currentPriority = Int32.MaxValue;
 			Entities.WithoutBurst().WithAny<TriggerStay>().ForEach((in RoomTrigger trigger) =>
 			{
-				newSelectedEntity = trigger.RoomEntity;
-				if (EntityManager.HasComponent<ActiveRoomSelected>(newSelectedEntity)) isAlreadyActive = true;
+				if (trigger.Priority <= currentPriority)
+				{
+					currentPriority = trigger.Priority;
+					newSelectedEntity = trigger.RoomEntity;
+					if (EntityManager.HasComponent<ActiveRoomSelected>(newSelectedEntity))
+					{
+						isAlreadyActive = true;
+					}
+				}
 			}).Run();
 
 			RequestNewRoom(isAlreadyActive, newSelectedEntity);

@@ -1,11 +1,12 @@
 using Parabole.RoomSystem.Core.Content.Authoring;
+using Parabole.RoomSystem.Core.Content.Components;
 using Parabole.RoomSystem.Core.Room;
 using Parabole.RoomSystem.Core.Room.Components;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-namespace RoomSystem.Core.Room
+namespace Parabole.RoomSystem.Core.Room
 {
 	[UpdateInGroup(typeof(RoomUpdateGroup))]
 	[UpdateBefore(typeof(ActiveRoomSelectedUpdateSystem))]

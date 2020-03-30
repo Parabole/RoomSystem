@@ -1,12 +1,18 @@
+using Parabole.RoomSystem.Core.Content.Components;
 using Parabole.RoomSystem.Core.Helper;
-using Parabole.RoomSystem.Core.Room;
 using Parabole.RoomSystem.Core.Room.Components;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace RoomSystem.Core.Room
+namespace Parabole.RoomSystem.Core.Room
 {
+	/// <summary>
+	/// Sets the right components by comparing the currently visible/standby room and contents.
+	/// Since both rooms and content use the same sets of components (RoomVisible, RoomJustVisible, etc),
+	/// the system updates them all at the same time.
+	/// </summary>
+	[AlwaysUpdateSystem]
 	[UpdateInGroup(typeof(RoomUpdateRequestGroup))]
 	[UpdateAfter(typeof(RoomVisibilityListingSystem))]
 	public class RoomVisibilityComponentSyncSystem : SystemBase
@@ -17,7 +23,7 @@ namespace RoomSystem.Core.Room
 		private NativeList<Entity> removeStandbyList = new NativeList<Entity>(Allocator.Persistent);
 		private NativeList<Entity> addVisibleList = new NativeList<Entity>(Allocator.Persistent);
 		private NativeList<Entity> addStandbyList = new NativeList<Entity>(Allocator.Persistent);
-		
+
 		protected override void OnCreate()
 		{
 			listingSystem = World.GetOrCreateSystem<RoomVisibilityListingSystem>();
@@ -33,10 +39,15 @@ namespace RoomSystem.Core.Room
 
 		protected override void OnUpdate()
 		{
-			var inputDependencies = Dependency;
+			var inputDeps = JobHandle.CombineDependencies(Dependency, listingSystem.FillJobHandle);
+
+			removeVisibleList.Clear();
+			addVisibleList.Clear();
+			removeStandbyList.Clear();
+			addStandbyList.Clear();
 			
 			// TODO: Find a way to run those in parallel
-			var visibleHandle = StartVisibleJobs(inputDependencies);
+			var visibleHandle = StartVisibleJobs(inputDeps);
 			var standbyHandle = StartStandbyJobs(visibleHandle);
 			
 			JobHandle.CombineDependencies(visibleHandle, standbyHandle).Complete();
@@ -50,23 +61,20 @@ namespace RoomSystem.Core.Room
 			
 			var localRemoveList = removeVisibleList;
 			var localAddList = addVisibleList;
-						
-			localRemoveList.Clear();
-			localAddList.Clear();
 			
-			var removeHandle = Entities.WithAll<RoomDefinition, VisibleRoom>().WithReadOnly(neededEntities)
-				.ForEach((Entity entity, DynamicBuffer<RoomContentReference> buffer) =>
-				{
-					CheckRemove(entity, buffer, neededEntities, localRemoveList);
-				}).Schedule(inputDependencies);
+			var removeHandle = Entities.WithAny<RoomContent, RoomDefinition>().WithAll<VisibleRoom>()
+				.WithReadOnly(neededEntities).ForEach((Entity entity) =>
+			{
+				CheckRemove(entity, neededEntities, localRemoveList);
+			}).Schedule(inputDependencies);
 
-			var addHandle = Entities.WithAll<RoomDefinition>().WithNone<VisibleRoom>().WithReadOnly(neededEntities)
-				.ForEach((Entity entity, DynamicBuffer<RoomContentReference> buffer) =>
-				{
-					CheckAdd(entity, buffer, neededEntities, localAddList);
-				}).Schedule(removeHandle);
+			var addHandle = Entities.WithAny<RoomContent, RoomDefinition>().WithNone<VisibleRoom>()
+				.WithReadOnly(neededEntities).ForEach((Entity entity) =>
+			{
+				CheckAdd(entity, neededEntities, localAddList);
+			}).Schedule(inputDependencies);
 			
-			return addHandle;
+			return JobHandle.CombineDependencies(addHandle, removeHandle);
 		}
 
 		private JobHandle StartStandbyJobs(JobHandle inputDependencies)
@@ -76,26 +84,22 @@ namespace RoomSystem.Core.Room
 			var localRemoveList = removeStandbyList;
 			var localAddList = addStandbyList;
 			
-			localRemoveList.Clear();
-			localAddList.Clear();
-			
-			var removeHandle = Entities.WithAll<RoomDefinition, StandbyRoom>().WithReadOnly(neededEntities)
-				.ForEach((Entity entity, DynamicBuffer<RoomContentReference> buffer) =>
+			var removeHandle = Entities.WithAny<RoomContent, RoomDefinition>().WithAll<StandbyRoom>()
+				.WithReadOnly(neededEntities).ForEach((Entity entity) =>
 				{
-					CheckRemove(entity, buffer, neededEntities, localRemoveList);
+					CheckRemove(entity, neededEntities, localRemoveList);
 				}).Schedule(inputDependencies);
 
-			var addHandle = Entities.WithAll<RoomDefinition>().WithNone<StandbyRoom>().WithReadOnly(neededEntities)
-				.ForEach((Entity entity, DynamicBuffer<RoomContentReference> buffer) =>
+			var addHandle = Entities.WithAny<RoomContent, RoomDefinition>().WithNone<StandbyRoom>()
+				.WithReadOnly(neededEntities).ForEach((Entity entity) =>
 				{
-					CheckAdd(entity, buffer, neededEntities, localAddList);
-				}).Schedule(removeHandle);
+					CheckAdd(entity, neededEntities, localAddList);
+				}).Schedule(inputDependencies);
 			
-			return addHandle;
+			return JobHandle.CombineDependencies(addHandle, removeHandle);
 		}
 
-		private static void CheckRemove(Entity entity, DynamicBuffer<RoomContentReference> buffer, 
-			NativeList<Entity> neededEntities, NativeList<Entity> removeList)
+		private static void CheckRemove(Entity entity, NativeList<Entity> neededEntities, NativeList<Entity> removeList)
 		{
 			if (neededEntities.Contains(entity))
 			{
@@ -103,11 +107,9 @@ namespace RoomSystem.Core.Room
 			}
 			
 			removeList.AddUnion(entity);
-			AddBufferEntitiesToList(buffer, removeList);
 		}
 
-		private static void CheckAdd(Entity entity, DynamicBuffer<RoomContentReference> buffer, 
-			NativeList<Entity> neededEntities, NativeList<Entity> addList)
+		private static void CheckAdd(Entity entity, NativeList<Entity> neededEntities, NativeList<Entity> addList)
 		{
 			if (!neededEntities.Contains(entity))
 			{
@@ -115,15 +117,6 @@ namespace RoomSystem.Core.Room
 			}
 			
 			addList.AddUnion(entity);
-			AddBufferEntitiesToList(buffer, addList);
-		}
-
-		private static void AddBufferEntitiesToList(DynamicBuffer<RoomContentReference> buffer, NativeList<Entity> list)
-		{
-			for (int i = 0; i < buffer.Length; i++)
-			{
-				list.AddUnion(buffer[i].Entity);
-			}
 		}
 
 		private void AddAndRemoveComponents()
