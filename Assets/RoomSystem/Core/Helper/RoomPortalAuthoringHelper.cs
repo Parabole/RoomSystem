@@ -8,12 +8,13 @@ namespace Parabole.RoomSystem.Core.Helper
 	public static class RoomPortalAuthoringHelper
 	{
 		public static void CreatePortal(Entity portalEntity, Entity roomEntityA, 
-			Entity roomEntityB, EntityManager dstManager)
+			Entity roomEntityB, EntityManager dstManager, bool isLimited = false)
 		{
 			dstManager.AddComponentData(portalEntity, new RoomPortal
 			{
 				EntityRoomA = roomEntityA,
 				EntityRoomB = roomEntityB,
+				IsLimited = isLimited,
 			});
 			
 			AddReferenceToRoom(portalEntity, roomEntityA, roomEntityB, dstManager);

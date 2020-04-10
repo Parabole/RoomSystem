@@ -14,6 +14,11 @@ namespace Parabole.RoomSystem.Core.Portal.Components
 		/// </summary>
 		public bool IsAccessible;
 
+		/// <summary>
+		/// Limit the creation of other portals passing through this one
+		/// </summary>
+		public bool IsLimited;
+
 		public Entity EntityRoomA;
 		
 		public Entity EntityRoomB;

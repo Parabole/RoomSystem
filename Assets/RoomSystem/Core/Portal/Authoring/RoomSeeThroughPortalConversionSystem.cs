@@ -5,6 +5,7 @@ using Parabole.RoomSystem.Core.Room.Authoring;
 using Parabole.RoomSystem.Core.Room.Components;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
 
 namespace Parabole.RoomSystem.Core.Portal.Authoring
 {
@@ -48,13 +49,22 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 			}
 
 			var portalReferenceA = portalReferences[currentIndex];
+			var portalEntityA = portalReferenceA.PortalEntity;
+			
+			if (!GetIsChainable(portalEntityA))
+			{
+				return;
+			}
 			
 			for (int i = currentIndex + 1; i < length; i++)
 			{
 				var portalReferenceB = portalReferences[i];
-
-				var portalEntityA = portalReferenceA.PortalEntity;
 				var portalEntityB = portalReferenceB.PortalEntity;
+
+				if (!GetIsChainable(portalEntityB))
+				{
+					return;
+				}
 				
 				var element = new PortalChainElement
 				{
@@ -65,15 +75,14 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 					PortalB = portalEntityB,
 				};
 
-				// Can't chain other chains
-				if (EntityManager.HasComponent<RoomPortalChain>(portalEntityA) ||
-				    EntityManager.HasComponent<RoomPortalChain>(portalEntityB))
-				{
-					continue;
-				}
-				
 				chainElements.Add(element);
 			}
+		}
+
+		private bool GetIsChainable(Entity portalEntity)
+		{
+			return !DstEntityManager.HasComponent<RoomPortalChain>(portalEntity) &&
+			       !DstEntityManager.GetComponentData<RoomPortal>(portalEntity).IsLimited;
 		}
 
 		private void CreatePortalChains()

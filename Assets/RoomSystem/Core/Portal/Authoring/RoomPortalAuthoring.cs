@@ -12,9 +12,12 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 	{
 		[SerializeField] private RoomAuthoring roomAuthoringA = null;
 		[SerializeField] private RoomAuthoring roomAuthoringB = null;
+		[SerializeField] private bool isLimited = false;
 		
 		public RoomAuthoring RoomAuthoringA => roomAuthoringA;
 		public RoomAuthoring RoomAuthoringB => roomAuthoringB;
+
+		public bool IsLimited => isLimited;
 
 		private bool wasChainChecked;
 		private bool isChain;
@@ -30,7 +33,7 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 			var roomEntityA = conversionSystem.GetPrimaryEntity(roomAuthoringA);
 			var roomEntityB = conversionSystem.GetPrimaryEntity(roomAuthoringB);
 			
-			RoomPortalAuthoringHelper.CreatePortal(entity, roomEntityA, roomEntityB, dstManager);
+			RoomPortalAuthoringHelper.CreatePortal(entity, roomEntityA, roomEntityB, dstManager, isLimited);
 			
 			dstManager.AddComponentData(entity, new RoomPortalId
 			{

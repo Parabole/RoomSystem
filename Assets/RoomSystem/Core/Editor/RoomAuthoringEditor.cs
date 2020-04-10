@@ -4,6 +4,7 @@ using System.Linq;
 using Parabole.EditorTools;
 using Parabole.RoomSystem.Core.Content.Authoring;
 using Parabole.RoomSystem.Core.ExcludePortal;
+using Parabole.RoomSystem.Core.Network.Authoring;
 using Parabole.RoomSystem.Core.Portal.Authoring;
 using Parabole.RoomSystem.Core.Room.Authoring;
 using Unity.Entities;
@@ -103,20 +104,33 @@ namespace Parabole.RoomSystem.Core.Editor
 			{
 				GUILayout.BeginHorizontal();
 				
+				var isSeeThrough = linkedRoomData.SeeThroughRoom != null;
+				var isExclude = linkedRoomData.Exclude != null;
+				
 				var labelText = linkedRoomData.OtherRoom.RoomName;
+				
 				if (linkedRoomData.Exclude != null)
 				{
 					labelText += " (Excluded)";
 				}
+				else if (linkedRoomData.Portal != null && linkedRoomData.Portal.IsLimited)
+				{
+					labelText += " (Limited)";
+				}
 				GUILayout.Label(labelText);
+
+				if (isSeeThrough && !isExclude)
+				{
+					CheckExcludeButton(linkedRoomData.OtherRoom);
+				}
 				
 				CheckSmallSelectionButton("Room", linkedRoomData.OtherRoom.gameObject, Color.green);
 				
-				if (linkedRoomData.Exclude != null)
+				if (isExclude)
 				{
 					CheckSmallSelectionButton("Exclude", linkedRoomData.Exclude.gameObject, Color.red);
 				}
-				else if (linkedRoomData.SeeThroughRoom != null)
+				else if (isSeeThrough)
 				{
 					CheckSmallSelectionButton("Through", linkedRoomData.SeeThroughRoom.gameObject, Color.green);
 				}
@@ -131,12 +145,41 @@ namespace Parabole.RoomSystem.Core.Editor
 
 		private void CheckSmallSelectionButton(string label, GameObject gameObject, Color color)
 		{
+			var previousColor = GUI.backgroundColor;
 			GUI.backgroundColor = color;
 			if (GUILayout.Button(label, GUILayout.MaxWidth(80)))
 			{
 				Selection.activeGameObject = gameObject;
 			}
-			GUI.backgroundColor = color;
+			GUI.backgroundColor = previousColor;
+		}
+		
+		private void CheckExcludeButton(RoomAuthoring otherRoomAuthoring)
+		{
+			var previousColor = GUI.backgroundColor;
+			GUI.backgroundColor = Color.red;
+			if (GUILayout.Button("x", GUILayout.MaxWidth(20)))
+			{
+				var networkAuthoring = authoring.GetComponentInParent<RoomNetworkAuthoring>();
+				var parent = networkAuthoring.transform;
+				
+				var gameObject = new GameObject("New Exclude Portal", typeof(RoomExcludePortalAuthoring));
+				Undo.RegisterCreatedObjectUndo(gameObject, "Create Exclude Portal");
+				gameObject.transform.SetParent(parent, false);
+
+				var exclude = gameObject.GetComponent<RoomExcludePortalAuthoring>();
+				var excludeSerializedObject = new SerializedObject(exclude);
+
+				excludeSerializedObject.FindProperty("roomAuthoringA").objectReferenceValue = authoring;
+				excludeSerializedObject.FindProperty("roomAuthoringB").objectReferenceValue = otherRoomAuthoring;
+
+				excludeSerializedObject.ApplyModifiedProperties();
+				
+				GameObjectEditorIconHelper.SetIcon(gameObject, GameObjectEditorIconHelper.LabelIcon.Red);
+				
+				gameObject.name = exclude.GetPortalName();
+			}
+			GUI.backgroundColor = previousColor;
 		}
 
 		private IEnumerable<LinkedRoomData> GetLinkedRooms()
@@ -162,6 +205,11 @@ namespace Parabole.RoomSystem.Core.Editor
 			var dataComparer = new LinkedRoomDataRoomComparer();
 			foreach (var linkedRoomData in resultList)
 			{
+				if (linkedRoomData.Portal.IsLimited)
+				{
+					continue;
+				}
+				
 				var seeThroughEnumerable = AddRoomsLinkedBySeeThrough(linkedRoomData.OtherRoom, allPortals);
 
 				enumerable = enumerable.Union(seeThroughEnumerable, dataComparer);
