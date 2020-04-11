@@ -1,9 +1,10 @@
 using Unity.Entities;
 
-namespace DefaultNamespace
+namespace Parabole.RoomSystem.TriggerIntegration
 {
 	public struct RoomTrigger : IComponentData
 	{
 		public Entity RoomEntity;
+		public int Priority;
 	}
 }
