@@ -26,7 +26,7 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 		{
 			if (!GetIsFullyAssigned())
 			{
-				Debug.LogError($"Rooms in portal {gameObject.name} are not correctly assigned");
+				Debug.LogError($"Rooms in portal {gameObject.name} are not correctly assigned", gameObject);
 				return;
 			}
 

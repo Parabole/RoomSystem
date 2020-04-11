@@ -15,6 +15,12 @@ namespace Parabole.RoomSystem.Core.ExcludePortal
 		
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
+			if (!GetIsFullyAssigned())
+			{
+				Debug.LogError($"Rooms in exclude portal {gameObject.name} are not correctly assigned", gameObject);
+				return;
+			}
+			
 			var entityRoomA = conversionSystem.GetPrimaryEntity(roomAuthoringA);
 			var entityRoomB = conversionSystem.GetPrimaryEntity(roomAuthoringB);
 			
