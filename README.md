@@ -29,3 +29,7 @@ Content linked to the state of the room(s) it is assigned to. Used for the actua
 ![Room Authoring Interface](/Documentation/RoomAuthoringInterface.png)
 
 *See Through:* Room that allows adjacent rooms to be visible from each other by looking through it. It will cause every portals on this room to be chained together.
+
+### Door Portal Link Menu
+
+![Door Portal Link Menu](/Documentation/DoorPortalLinkTools.png)
