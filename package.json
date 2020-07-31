@@ -1,7 +1,7 @@
 {
     "name": "com.parabole.room-system",
     "displayName": "Room System",
-    "version": "0.2.4git s",
+    "version": "0.2.4",
     "unity": "2019.3",
     "description": "Room system",
     "keywords": ["room"],
