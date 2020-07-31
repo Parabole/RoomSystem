@@ -17,6 +17,8 @@ namespace Parabole.RoomSystem.Core.Room
 
 		protected override void OnCreate()
 		{
+			base.OnCreate();
+			
 			var query = GetEntityQuery(ComponentType.ReadWrite<RoomUpdateRequest>());
 			
 			RequireForUpdate(query);
