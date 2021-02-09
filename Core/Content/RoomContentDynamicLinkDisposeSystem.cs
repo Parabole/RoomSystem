@@ -27,19 +27,19 @@ namespace Parabole.RoomSystem.Core.Room
 			
 			EntityManager.RemoveComponent<RoomContentDynamicLinkSystemState>(removedQuery);
 			
-			Entities.WithDeallocateOnJobCompletion(removedContents)
+			Entities.WithDisposeOnCompletion(removedContents)
 				.ForEach((DynamicBuffer<RoomContentReference> references) =>
-			{
-				for (int i = references.Length - 1; i >= 0; i--)
 				{
-					var reference = references[i];
-
-					if (removedContents.Contains(reference.Entity))
+					for (int i = references.Length - 1; i >= 0; i--)
 					{
-						references.RemoveAt(i);
+						var reference = references[i];
+
+						if (removedContents.Contains(reference.Entity))
+						{
+							references.RemoveAt(i);
+						}
 					}
-				}
-			}).ScheduleParallel();
+				}).ScheduleParallel();
 		}
 	}
 }
