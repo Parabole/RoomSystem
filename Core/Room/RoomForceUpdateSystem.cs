@@ -11,8 +11,12 @@ namespace Parabole.RoomSystem.Core.Room
 		private EntityQuery forceRequestQuery;
 		private EntityQuery requestQuery;
 
+		private EntityArchetype requestArchetype;
+		
 		protected override void OnCreate()
 		{
+			requestArchetype = EntityManager.CreateArchetype(ComponentType.ReadWrite<RoomUpdateRequest>());
+			
 			requestQuery = GetEntityQuery(ComponentType.ReadWrite<RoomUpdateRequest>());
 			forceRequestQuery = GetEntityQuery(ComponentType.ReadWrite<RoomForceUpdateRequest>());
 			
@@ -21,9 +25,9 @@ namespace Parabole.RoomSystem.Core.Room
 
 		protected override void OnUpdate()
 		{
-			if (requestQuery.CalculateEntityCount() == 0)
+			if (requestQuery.IsEmpty)
 			{
-				EntityManager.CreateEntity(ComponentType.ReadWrite<RoomUpdateRequest>());
+				EntityManager.CreateEntity(requestArchetype);
 			}
 			
 			EntityManager.DestroyEntity(forceRequestQuery);
