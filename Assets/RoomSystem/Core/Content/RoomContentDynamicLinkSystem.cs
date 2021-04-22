@@ -17,6 +17,8 @@ namespace Parabole.RoomSystem.Core.Room
 		private NativeList<Entity> fullyLinkedContents = new NativeList<Entity>(Allocator.Persistent);
 
 		private EntityQuery query;
+		
+		private EntityArchetype requestArchetype;
 
 		/// Used for delay warning
 		private int runCount = 0;
@@ -24,6 +26,8 @@ namespace Parabole.RoomSystem.Core.Room
 		protected override void OnCreate()
 		{
 			RequireForUpdate(query);
+
+			requestArchetype = EntityManager.CreateArchetype(ComponentType.ReadWrite<RoomUpdateRequest>());
 		}
 
 		protected override void OnDestroy()
@@ -132,21 +136,28 @@ namespace Parabole.RoomSystem.Core.Room
 
 		private void SetComponents()
 		{
+			bool shouldRequestUpdate = false;
 			for (int i = 0; i < linkOperations.Length; i++)
 			{
 				var operation = linkOperations[i];
-				LinkContentToRoom(operation);
+				if (LinkContentToRoom(operation))
+				{
+					shouldRequestUpdate = true;
+				}
 			}
 
-			for (int i = 0; i < fullyLinkedContents.Length; i++)
+			if (shouldRequestUpdate)
 			{
-				var entity = fullyLinkedContents[i];
-				EntityManager.AddComponent<RoomContentDynamicLinkSystemState>(entity);
+				EntityManager.CreateEntity(requestArchetype);
 			}
+			
+			EntityManager.AddComponent<RoomContentDynamicLinkSystemState>(fullyLinkedContents);
 		}
 
-		private void LinkContentToRoom(LinkOperation operation)
+		private bool LinkContentToRoom(LinkOperation operation)
 		{
+			var hasChanged = false;
+			
 			var roomEntity = operation.RoomEntity;
 			var contentEntity = operation.ContentEntity;
 			var buffer = EntityManager.GetBuffer<RoomContentReference>(operation.RoomEntity);
@@ -159,19 +170,24 @@ namespace Parabole.RoomSystem.Core.Room
 			{
 				EntityManager.AddComponent<JustActiveRoom>(contentEntity);
 				EntityManager.AddComponent<ActiveRoom>(contentEntity);
+				hasChanged = true;
 			}
 
 			if (EntityManager.HasComponent<VisibleRoom>(roomEntity))
 			{
 				EntityManager.AddComponent<JustVisibleRoom>(contentEntity);
 				EntityManager.AddComponent<VisibleRoom>(contentEntity);
+				hasChanged = true;
 			}
 
 			if (EntityManager.HasComponent<StandbyRoom>(roomEntity))
 			{
 				EntityManager.AddComponent<JustStandbyRoom>(contentEntity);
 				EntityManager.AddComponent<StandbyRoom>(contentEntity);
+				hasChanged = true;
 			}
+
+			return hasChanged;
 		}
 
 		private void LogWarning(Entity entity, int index)

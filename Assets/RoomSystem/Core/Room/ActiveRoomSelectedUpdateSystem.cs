@@ -11,6 +11,12 @@ namespace Parabole.RoomSystem.Core.Room
 		private NativeList<Entity> entitiesToSetActive = new NativeList<Entity>(Allocator.Persistent);
 		private NativeList<Entity> entitiesToSetNotActive = new NativeList<Entity>(Allocator.Persistent);
 
+		private EntityArchetype requestArchetype;
+		
+		protected override void OnCreate()
+		{
+			requestArchetype = EntityManager.CreateArchetype(ComponentType.ReadWrite<RoomUpdateRequest>());
+		}
 		protected override void OnDestroy()
 		{
 			entitiesToSetActive.Dispose();
@@ -19,7 +25,7 @@ namespace Parabole.RoomSystem.Core.Room
 
 		protected override void OnUpdate()
 		{
-			EntityManager.CreateEntity(ComponentType.ReadWrite<RoomUpdateRequest>());
+			EntityManager.CreateEntity(requestArchetype);
 			
 			entitiesToSetActive.Clear();
 			entitiesToSetNotActive.Clear();

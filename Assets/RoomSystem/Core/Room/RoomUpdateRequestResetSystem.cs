@@ -7,6 +7,7 @@ namespace Parabole.RoomSystem.Core.Room
 	/// Just before checking for new request, remove last frame's request, if any
 	/// </summary>
 	[UpdateBefore(typeof(ActiveRoomSelectedUpdateSystem))]
+	[UpdateBefore(typeof(RoomContentDynamicLinkSystem))]
 	[UpdateInGroup(typeof(RoomUpdateGroup))]
 	public class RoomUpdateRequestResetSystem : SystemBase
 	{
