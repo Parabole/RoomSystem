@@ -1,6 +1,7 @@
 using Parabole.RoomSystem.Core.Room;
 using Parabole.RoomSystem.Core.Room.Components;
 using Unity.Entities;
+using UnityEngine;
 
 namespace Parabole.RoomSystem.BasicContent
 {
@@ -9,23 +10,44 @@ namespace Parabole.RoomSystem.BasicContent
 	{
 		protected override void OnUpdate()
 		{
-			Entities.WithoutBurst().WithAll<JustVisibleRoom>().ForEach((RoomContentRenderer content) =>
+			Entities.WithoutBurst().WithAll<JustVisibleRoom>().ForEach((Entity entity, RoomContentRenderer content) =>
 			{
 				var renderers = content.Renderers;
 				for (int i = 0; i < renderers.Length; i++)
 				{
-					renderers[i].enabled = true;
+					SetRenderer(entity, renderers[i], true);
 				}
 			}).Run();
 			
-			Entities.WithoutBurst().WithAll<JustNotVisibleRoom>().ForEach((RoomContentRenderer content) =>
+			Entities.WithoutBurst().WithAll<JustNotVisibleRoom>().ForEach((Entity entity, RoomContentRenderer content) =>
 			{
 				var renderers = content.Renderers;
 				for (int i = 0; i < renderers.Length; i++)
 				{
-					renderers[i].enabled = false;
+					SetRenderer(entity, renderers[i], false);
 				}
 			}).Run();
+		}
+
+		private void SetRenderer(Entity entity, Renderer renderer, bool value)
+		{
+			if (renderer == null)
+			{
+				var name = GetName(EntityManager, entity);
+				Debug.LogError($"Renderer on room content has been destroyed on entity {name}");
+				return;
+			}
+			
+			renderer.enabled = value;
+		}
+		
+		private static string GetName(EntityManager manager, Entity entity)
+		{
+#if UNITY_EDITOR
+			return manager.GetName(entity);
+#else
+			return entity.ToString();
+#endif
 		}
 	}
 }
