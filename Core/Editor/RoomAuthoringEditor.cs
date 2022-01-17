@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Parabole.EditorTools;
+using Parabole.InteractionSystem.Triggers;
 using Parabole.RoomSystem.Core.Content.Authoring;
 using Parabole.RoomSystem.Core.ExcludePortal;
 using Parabole.RoomSystem.Core.Network.Authoring;
@@ -36,6 +37,7 @@ namespace Parabole.RoomSystem.Core.Editor
 			CheckName();
 			CheckCreateChildContent();
 			CheckCreateDynamicContent();
+			CheckCreateTrigger();
 			DrawConnectedRoomsPortals();
 		}
 
@@ -60,6 +62,28 @@ namespace Parabole.RoomSystem.Core.Editor
 			}
 		}
 
+		private void CheckCreateTrigger()
+		{
+			if (authoring.GetComponent<RoomTriggerAuthoring>() == null && GUILayout.Button("Create Trigger"))
+			{
+				var triggerAuthoring = Undo.AddComponent<RoomTriggerAuthoring>(authoring.gameObject);
+				var roomName =  authoring.RoomName;
+				var gameObject = new GameObject($"RoomTrigger_{roomName}", typeof(TriggerAuthoring), typeof(BoxCollider));
+				
+				Undo.RegisterCreatedObjectUndo(gameObject, "Create Trigger");
+
+				var triggerSerializedObject = new SerializedObject(triggerAuthoring);
+				triggerSerializedObject.FindProperty("triggerAuthoring").objectReferenceValue = 
+					gameObject.GetComponent<TriggerAuthoring>();
+				triggerSerializedObject.ApplyModifiedProperties();
+				
+				gameObject.transform.SetParent(authoring.transform, false);
+				gameObject.transform.position = authoring.transform.position;
+
+				Selection.activeGameObject = gameObject;
+			}
+		}
+		
 		private void CheckCreateChildContent()
 		{
 			if (GUILayout.Button("Create New Child Content"))
