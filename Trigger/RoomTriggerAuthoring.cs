@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace Parabole.RoomSystem.Core.Room.Authoring
 {
-	[RequiresEntityConversion]
 	public class RoomTriggerAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
 		[SerializeField] private TriggerAuthoring triggerAuthoring = null;

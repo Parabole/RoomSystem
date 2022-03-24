@@ -63,7 +63,7 @@ namespace Parabole.RoomSystem.Core.Portal.Authoring
 
 				if (!GetIsChainable(portalEntityB))
 				{
-					return;
+					continue;
 				}
 				
 				var element = new PortalChainElement

@@ -8,7 +8,9 @@ namespace Parabole.RoomSystem.BasicContent.Authoring
 	public class RoomContentLightAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
 		[SerializeField] private GameObject[] lightParents = null;
-		
+
+		public GameObject[] LightParents => lightParents;
+
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
 			var lightList = new List<Light>();

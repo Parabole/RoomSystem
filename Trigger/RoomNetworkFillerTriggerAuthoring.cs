@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace DefaultNamespace
 {
-	[RequiresEntityConversion]
 	public class RoomNetworkFillerTriggerAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
