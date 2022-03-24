@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Parabole.RoomSystem.Core.Content.Authoring
 {
-	[RequiresEntityConversion]
 	public class RoomContentAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
 		[SerializeField] private string contentName = null;

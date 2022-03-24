@@ -7,7 +7,6 @@ using UnityEngine;
 
 namespace Parabole.RoomSystem.Core.Portal.Authoring
 {
-	[RequiresEntityConversion]
 	public class RoomPortalAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
 		[SerializeField] private RoomAuthoring roomAuthoringA = null;

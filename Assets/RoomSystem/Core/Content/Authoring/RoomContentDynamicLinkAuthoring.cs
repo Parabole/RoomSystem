@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace Parabole.RoomSystem.Core.Content.Authoring
 {
-	[RequiresEntityConversion]
 	public class RoomContentDynamicLinkAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
 		[SerializeField] private string[] roomNames = null;
