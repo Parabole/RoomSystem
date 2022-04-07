@@ -2,7 +2,6 @@ using System;
 using Parabole.InteractionSystem.Runtime.Triggers;
 using Parabole.RoomSystem.Core.Room;
 using Parabole.RoomSystem.Core.Room.Components;
-using Unity.Collections;
 using Unity.Entities;
 
 namespace Parabole.RoomSystem.TriggerIntegration
@@ -35,10 +34,7 @@ namespace Parabole.RoomSystem.TriggerIntegration
 				{
 					currentPriority = trigger.Priority;
 					newSelectedEntity = trigger.RoomEntity;
-					if (EntityManager.HasComponent<ActiveRoomSelected>(newSelectedEntity))
-					{
-						isAlreadyActive = true;
-					}
+					isAlreadyActive = EntityManager.HasComponent<ActiveRoomSelected>(newSelectedEntity);
 				}
 			}).Run();
 
